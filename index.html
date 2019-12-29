@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="dist/img/favicon.ico">
+
+    <title>防偽碼測試</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="dist/css/bootstrap.min.css" rel="stylesheet">
+    
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="dist/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="dist/css/starter-template.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <!-- <script src="dist/js/ie-emulation-modes-warning.js"></script> -->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript">
+   //Created / Generates the captcha function    
+    function DrawCaptcha()
+    {
+        var a = Math.ceil(Math.random() * 9);
+        var b = Math.ceil(Math.random() * 9);       
+        var c = Math.ceil(Math.random() * 9);  
+        var d = Math.ceil(Math.random() * 9);  
+        var e = Math.ceil(Math.random() * 9);  
+        var f = Math.ceil(Math.random() * 9);  
+        var g = Math.ceil(Math.random() * 9);  
+        var code = a + ' ' + b  + ' ' + c + ' ' + d + ' ' + e + ' '+ f + ' ' + g;
+        document.getElementById("txtCaptcha").value = code;
+    }
+
+    // Validate the Entered input aganist the generated security code function   
+    function ValidCaptcha(){
+        var str0 = removeSpaces(document.getElementById('txtBarcode').value); //防偽編碼
+        var str1 = removeSpaces(document.getElementById('txtCaptcha').value); 
+        var str2 = removeSpaces(document.getElementById('txtInput').value);   //使用者輸入驗證碼 
+            if (str0 == "" || null  ) { 
+              alert ("防偽編碼未輸入"); 
+              return false; 
+            } 
+            else
+              if (str1 != str2) { 
+                alert ("驗證碼錯誤"); 
+                return false; 
+              }
+              $.ajax({
+                url: "//www.zgfw-315.com/fwqueryjson.ashx?fwcode="+str0,
+                type: "GET",
+                dataType: "jsonp", //指定服务器返回的数据类型
+                jsonp: "callback",
+                success: function (data) {
+                    // var result = JSON.stringify(data); //json对象转成字符串
+                    // $("#checkfwcode").val(result);
+                    var x;
+                    x = data.CodeState;
+                    y = data.QueryResult;
+                    if( x=="2" ){
+                      alert ("此序號已重複");
+                      window.location.reload(); 
+                    }                      
+                    if(x=="1"){
+                      alert ("購買成功，已通過認證，感謝您的購買");
+                      window.location.reload(); 
+                    }                  
+                    if(x=="0"){
+                      alert ("錯誤的防偽編碼");
+                      window.location.reload(); 
+                    }
+                      
+                },
+                error:function () { //请求失败后调用的函数
+                    console.log(JSON.stringify(textStatus));
+                }
+              });
+    }
+    // Remove the spaces from the entered and generated code
+    function removeSpaces(string)
+    {
+        return string.split(' ').join('');
+    };    
+    </script>  
+
+    <style>
+    	button.btn1 { 
+          padding :5px;
+          border: 0px;
+          background: transparent no-repeat 10px center; 
+          cursor: pointer;
+      }
+    </style>
+    
+  </head>
+
+  <body  onload="DrawCaptcha()";>
+  	<script  type="text/javascript">
+  		if(window.name != "jimmypage"){
+  			location.reload();   // thanks jimmy;
+  			window.name = "jimmypage";
+  			}
+  		else{
+  			window.name = "";
+  			}
+  	</script>
+    
+    
+    
+    <div class="container">
+    	<DIV CLASS="FORM">
+    		<h3 class="page-header">防偽碼驗證</h3>
+        <h4>您可以選擇手動輸入驗證資訊，或透過手機掃瞄QR code自動驗證</h4>
+        <div class="form-group col-md-4 hidden-lg hidden-md">
+          <img src="dist/img/4.png" class="img-responsive" alt="防偽圖">
+        </div>
+        <br>
+    		<div class="container">
+          <form role="form" name="f1">
+            <div class="form-group col-md-8">
+              <div class="form-group">
+                <label for="txtBarcode">防偽編碼</label>
+                <input type="text" id="txtBarcode" class="form-control" name="txtBarcode" maxlength="30" value="2156524399314256" required>
+              </div>
+              <label for="txtInput">驗證碼</label>
+              <div class="form-group">
+                <div class="row">
+                  <div class="form-group col-md-6">
+                    <input align="left" valign="center" class="form-control input-md" type="text" id="txtInput" name="txtInput" tabindex="4" maxlength="20" required />
+                  </div>
+                  <div class="form-group col-md-6">
+                      <div class="input-group">
+                        <input align= "left" valign="center" class="form-control input-md" id="txtCaptcha" type="text" disabled="border-style:none" />
+                        <p type="button" class="input-group-addon" onclick="DrawCaptcha();" alt="更換一組驗證碼" ><img src="dist/img/icon-01.png" width="20" height="20" /></p>
+                      </div>
+                  </div>
+                </div>
+              </div>
+              <input class="btn btn-primary btn-lg btn-block" value="進行驗證" type="button" onclick="return ValidCaptcha(this);"></input>
+            </div>
+            <div class="form-group col-md-4 hidden-sm hidden-xs">
+              <img src="dist/img/4.png" class="img-responsive" alt="防偽圖">
+            </div>
+          </form>
+        </div>
+    	</div>
+    </div>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="dist/js/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="dist/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="dist/js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+  </body>
+  
+  
+  <foot>
+    <div style="color:#404040; background-color:white;">
+      <div class="container">
+        <center>
+        <h3 class="page-header">一刮二掃三驗證</h3>
+        <div class="row">
+          <div class="col-md-4">
+            <img src="dist/img/1.png" class="img-responsive" alt="一刮">
+            <div class="caption">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <img src="dist/img/2.png" class="img-responsive" alt="二掃">
+            <div class="caption">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <img src="dist/img/3.png" class="img-responsive" alt="三驗證">
+            <div class="caption">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </foot>
+</html>
